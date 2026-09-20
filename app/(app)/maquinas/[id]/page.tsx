@@ -1,0 +1,25 @@
+import Link from "next/link";
+import { desc, eq, or } from "drizzle-orm";
+import { notFound, redirect } from "next/navigation";
+import { ArrowLeft, CalendarDays, Camera, MapPin, Wrench } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getDb } from "@/db";
+import { clients, locations, machineProposals, machines, photos, visitMachineReports, visits, workOrderMachines, workOrders } from "@/db/schema";
+import { requireUser } from "@/lib/auth";
+import { TYPE_LABELS } from "@/lib/domain";
+
+export default async function MachinePage({ params }: { params: Promise<{ id: string }> }) {
+  const user = await requireUser();
+  const { id } = await params;
+  const db = getDb();
+  const context = (await db.select({ machine: machines, location: locations, client: clients }).from(machines).innerJoin(locations, eq(machines.locationId, locations.id)).innerJoin(clients, eq(locations.clientId, clients.id)).where(eq(machines.id, id)).limit(1))[0];
+  if (!context) notFound();
+  const orderLinks = await db.select({ order: workOrders }).from(workOrderMachines).innerJoin(workOrders, eq(workOrderMachines.workOrderId, workOrders.id)).where(eq(workOrderMachines.machineId, id));
+  if (user.role === "TECHNICIAN" && !orderLinks.some(({ order }) => order.assignedTechnicianId === user.id)) redirect("/dashboard");
+  const history = await db.select({ report: visitMachineReports, visit: visits, order: workOrders }).from(visitMachineReports).innerJoin(visits, eq(visitMachineReports.visitId, visits.id)).innerJoin(workOrders, eq(visits.workOrderId, workOrders.id)).leftJoin(machineProposals, eq(visitMachineReports.proposalId, machineProposals.id)).where(or(eq(visitMachineReports.machineId, id), eq(machineProposals.approvedMachineId, id))).orderBy(desc(visits.startedAt));
+  const visibleHistory = user.role === "OFFICE" ? history : history.filter(({ order }) => order.assignedTechnicianId === user.id);
+  const photoRows = await db.select().from(photos);
+  const { machine, location, client } = context;
+  return <main className="app-main"><Link href={user.role === "OFFICE" ? `/clientes/${client.id}` : "/dashboard"} className="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-[#087f86]"><ArrowLeft className="size-4" /> Volver</Link><p className="eyebrow">Historial de máquina</p><h1 className="page-title">{machine.code} · {machine.type}</h1><p className="page-subtitle">{client.name} · {location.name}</p><div className="mt-6 grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)]"><Card className="h-fit gap-4 border-[#d2e2e2] bg-white"><CardHeader><CardTitle>Ficha del equipo</CardTitle></CardHeader><CardContent className="space-y-3 text-sm"><p><strong>Marca:</strong> {machine.brand || "—"}</p><p><strong>Modelo:</strong> {machine.model || "—"}</p><p><strong>Serie:</strong> {machine.serialNumber || "—"}</p><p><MapPin className="mr-2 inline size-4 text-[#087f86]" />{machine.internalLocation || "Ubicación no indicada"}</p><p><CalendarDays className="mr-2 inline size-4 text-[#087f86]" />{machine.installationDate || "Instalación sin fecha"}</p><p><strong>Dirección:</strong> {location.address}</p>{machine.notes && <p className="rounded-xl bg-[#f1f8f7] p-3">{machine.notes}</p>}{machine.photoObjectKey && <Button variant="outline" size="sm" asChild><a href={`/archivos/maquina/${machine.id}`} target="_blank"><Camera /> Ver foto</a></Button>}</CardContent></Card><Card className="gap-4 border-[#d2e2e2] bg-white"><CardHeader><CardTitle>Atenciones anteriores</CardTitle></CardHeader><CardContent>{visibleHistory.length ? <div className="space-y-4">{visibleHistory.map(({ report, visit, order }) => <article key={report.id} className="rounded-xl border border-[#d2e2e2] p-4"><div className="flex flex-wrap items-start justify-between gap-2"><div><Link href={`/trabajos/${order.id}`} className="font-bold text-[#087f86]">{order.number}</Link><p className="text-sm text-slate-500">{visit.startedAt ? new Date(visit.startedAt).toLocaleDateString("es-PE") : visit.scheduledDate ?? "Sin fecha"} · {TYPE_LABELS[order.type]} · Visita {visit.sequence}</p></div><Wrench className="size-4 text-slate-400" /></div><div className="mt-4 grid gap-2 text-sm"><p><strong>Problema:</strong> {report.problemFound || "—"}</p><p><strong>Trabajo:</strong> {report.workPerformed || "—"}</p><p><strong>Acciones:</strong> {report.actionsTaken || "—"}</p><p><strong>Piezas:</strong> {report.partsReplaced || "—"}</p><p><strong>Observaciones:</strong> {report.observations || "—"}</p></div>{photoRows.filter((photo) => photo.reportId === report.id).length > 0 && <div className="mt-3 flex flex-wrap gap-2">{photoRows.filter((photo) => photo.reportId === report.id).map((photo) => <a key={photo.id} href={`/archivos/foto/${photo.id}`} target="_blank" className="text-sm font-semibold text-[#087f86]"><Camera className="mr-1 inline size-4" />{photo.fileName}</a>)}</div>}</article>)}</div> : <p className="text-sm text-slate-500">Todavía no hay atenciones registradas para esta máquina.</p>}</CardContent></Card></div></main>;
+}

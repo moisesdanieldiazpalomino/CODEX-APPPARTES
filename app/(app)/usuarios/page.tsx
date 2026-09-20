@@ -1,0 +1,17 @@
+import { createUserAction, resetPasswordAction, toggleUserAction } from "@/app/actions";
+import { FormMessage } from "@/components/form-message";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { getDb } from "@/db";
+import { users } from "@/db/schema";
+import { requireOffice } from "@/lib/auth";
+
+export default async function UsersPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  const actor = await requireOffice();
+  const { error } = await searchParams;
+  const rows = await getDb().select({ id: users.id, username: users.username, displayName: users.displayName, role: users.role, active: users.active }).from(users);
+  return <main className="app-main"><p className="eyebrow">Accesos</p><h1 className="page-title">Usuarios</h1><p className="page-subtitle">Cada persona entra con su propio usuario y contraseña.</p><div className="mt-5"><FormMessage error={error} /></div><div className="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]"><div className="space-y-3">{rows.map((user) => <Card key={user.id} className="gap-3 border-[#d2e2e2] bg-white py-4"><CardContent className="space-y-3"><div className="flex flex-wrap items-start justify-between gap-2"><div><p className="font-bold">{user.displayName}</p><p className="text-sm text-slate-500">{user.username} · {user.role === "OFFICE" ? "Oficina" : "Técnico"}</p></div><span className={`rounded-full px-2 py-1 text-xs font-bold ${user.active ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>{user.active ? "Activo" : "Inactivo"}</span></div><div className="flex flex-wrap gap-2">{user.id !== actor.id && <form action={toggleUserAction}><input type="hidden" name="id" value={user.id} /><input type="hidden" name="active" value={user.active ? "false" : "true"} /><Button type="submit" variant="outline" size="sm">{user.active ? "Desactivar" : "Activar"}</Button></form>}<form action={resetPasswordAction} className="flex gap-2"><input type="hidden" name="id" value={user.id} /><Input name="password" type="password" minLength={10} placeholder="Nueva contraseña" aria-label={`Nueva contraseña de ${user.displayName}`} className="h-9 max-w-[190px]" required /><Button type="submit" variant="outline" size="sm">Restablecer</Button></form></div></CardContent></Card>)}</div><Card className="h-fit gap-4 border-[#d2e2e2] bg-white"><CardHeader><CardTitle>Nuevo usuario</CardTitle></CardHeader><CardContent><form action={createUserAction} className="space-y-3"><div><Label htmlFor="displayName">Nombre</Label><Input id="displayName" name="displayName" required /></div><div><Label htmlFor="username">Usuario</Label><Input id="username" name="username" required /></div><div><Label htmlFor="password">Contraseña inicial</Label><Input id="password" name="password" type="password" minLength={10} required /></div><div><Label htmlFor="role">Perfil</Label><NativeSelect id="role" name="role" className="w-full"><NativeSelectOption value="TECHNICIAN">Técnico</NativeSelectOption><NativeSelectOption value="OFFICE">Oficina</NativeSelectOption></NativeSelect></div><Button type="submit" className="h-11 w-full bg-[#087f86] hover:bg-[#076970]">Crear usuario</Button></form></CardContent></Card></div></main>;
+}
