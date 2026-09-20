@@ -13,7 +13,7 @@ Actualizado: 20 de septiembre de 2026.
 
 ## Pendiente o no verificado
 
-- Hay quince pruebas automatizadas de utilidades de migración, contraseñas y programación de visitas, pero todavía no cubren los flujos completos de negocio ni existe una prueba integral con PC, móvil y tableta. Las búsquedas avanzadas y algunos flujos de corrección requieren revisión funcional.
+- Hay veintidós pruebas automatizadas de utilidades de migración, contraseñas, programación de visitas y estados de envío de formularios, pero todavía no cubren los flujos completos de negocio ni existe una prueba integral con PC, móvil y tableta. Las búsquedas avanzadas y algunos flujos de corrección requieren revisión funcional.
 - Los scripts `start:local` y `backup` están declarados, pero faltan sus archivos; no hay copia/restauración probada.
 - No se ha validado el acceso desde otros dispositivos por Wi‑Fi ni el despliegue en internet. No hay modo sin conexión ni envío real de PDF por correo.
 - El código operativo sigue en `app/`, `components/`, `lib/` y `db/`; `src/` es una reserva para una migración posterior.
@@ -28,7 +28,7 @@ Se renovaron la paleta, la tipografía, el acceso, la configuración inicial, la
 
 ## Estado de inicio de sesión
 
-Al enviar el formulario, el botón muestra «Iniciando sesión…» con indicador de actividad, queda desactivado para evitar envíos dobles y anuncia la comprobación a tecnologías de asistencia. El indicador respeta la preferencia de movimiento reducido. Las respuestas de error siguen apareciendo en el formulario; no cambian la acción ni las reglas de autenticación. Se verificaron TypeScript y compilación; ESLint terminó sin errores y con las mismas tres advertencias previas. Queda pendiente comprobar visualmente el estado durante una autenticación lenta.
+Al enviar el formulario, el botón muestra «Contectando..» con indicador de actividad, queda desactivado para evitar envíos dobles y anuncia la comprobación a tecnologías de asistencia. El indicador respeta la preferencia de movimiento reducido. Si las credenciales son incorrectas, la alerta existente «Usuario o contraseña incorrectos.» aparece en el formulario; con credenciales válidas, la acción crea la sesión y redirige al resumen. El alta de usuarios ahora muestra «Creando usuario...» y un mensaje visible mientras procesa, también bloqueando envíos repetidos. No se modifican las reglas de autenticación. Pasan las siete pruebas nuevas y las veintidós del proyecto, TypeScript, compilación y comprobación de guías; ESLint solo informa una advertencia previa en `lib/pdf.ts`. La ruta local `/login` respondió 200 y mostró la alerta al recibir el parámetro de error. Queda pendiente comprobar visualmente ambos estados durante una operación lenta.
 
 ## Seguimiento de tareas
 

@@ -17,7 +17,7 @@ export function LoginSubmit() {
         className="h-12 w-full text-base font-semibold disabled:cursor-wait disabled:opacity-100"
       >
         {pending ? (
-          <><LoaderCircle className="size-4 animate-spin motion-reduce:animate-none" aria-hidden="true" /> Iniciando sesión…</>
+          <><LoaderCircle className="size-4 animate-spin motion-reduce:animate-none" aria-hidden="true" /> Contectando..</>
         ) : (
           <>Entrar <ArrowRight className="size-4" aria-hidden="true" /></>
         )}

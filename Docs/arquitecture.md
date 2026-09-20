@@ -8,7 +8,7 @@ ClimaControl es una aplicación web adaptable para oficina (PC) y técnicos (mó
 
 `app/globals.css` define los colores, la tipografía y las superficies compartidas. La identidad usa azul petróleo, turquesa y tonos de niebla; el ámbar se reserva para trabajos pendientes. `components/app-shell.tsx` organiza el encabezado y la sesión, mientras `components/app-navigation.tsx` marca la sección activa y ofrece acceso a todas las áreas desde móvil. El resumen prioriza la agenda de hoy sobre los indicadores. Las pantallas de acceso y configuración comparten una composición adaptable; los formularios y fichas conservan componentes reutilizables de `components/ui/`. Al añadir una pantalla, respeta esta jerarquía, los estados visibles y las áreas táctiles.
 
-El acceso mantiene la acción de servidor en `app/actions.ts`; `components/login-submit.tsx` observa el estado pendiente del formulario con `useFormStatus`. Mientras se valida el acceso, cambia el botón a «Iniciando sesión…», muestra actividad, impide otro envío y anuncia el estado a lectores de pantalla. No añade demoras artificiales ni modifica la autenticación.
+El acceso mantiene la acción de servidor en `app/actions.ts`; `components/login-submit.tsx` observa el estado pendiente del formulario con `useFormStatus`. Mientras se valida el acceso, cambia el botón a «Contectando..», muestra actividad, impide otro envío y anuncia el estado a lectores de pantalla. Si las credenciales fallan, la acción vuelve a `/login` y `FormMessage` muestra una alerta. En `/usuarios`, `components/create-user-submit.tsx` aplica el mismo patrón al alta: botón «Creando usuario...» y mensaje visible mientras se procesa. No se añaden demoras artificiales ni se modifican las reglas de autenticación.
 
 ## Flujo de trabajo
 
