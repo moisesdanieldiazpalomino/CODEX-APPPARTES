@@ -26,7 +26,7 @@ export function AppShell({ user, children }: { user: CurrentUser; children: Reac
             </form>
           </div>
         </aside>
-        <div className={`min-w-0 flex-1 ${user.role === "OFFICE" ? "pb-20 lg:pb-0" : ""}`}>
+        <div className="min-w-0 flex-1 pb-20 lg:pb-0">
           <header className="flex h-[72px] items-center justify-between border-b border-[#d2e2e2] bg-white px-4 sm:px-7 lg:px-10">
             <Link href="/dashboard" className="flex items-center gap-2.5 lg:hidden">
               <span className="grid size-9 place-items-center rounded-lg bg-[#12333d] text-[#9de0dc]"><Fan className="size-5" /></span>

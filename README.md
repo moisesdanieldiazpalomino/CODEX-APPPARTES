@@ -18,9 +18,13 @@ npm ci
 npm run dev
 ```
 
-Abre `http://localhost:5173/` e inicia sesión con el **usuario y la contraseña anteriores**. Se migraron las cuentas y sus hashes, pero no las sesiones, así que hay que entrar de nuevo. En una base realmente vacía, `/setup` crea la primera cuenta de oficina. Al asignar un técnico, fecha y franja son obligatorias y quedan guardadas en cada visita. Para revisar cambios: `npm run build`, `npm run lint`, `npx tsc --noEmit` y `npm test`.
+Abre `http://localhost:5173/` e inicia sesión con el **usuario y la contraseña anteriores**. Se migraron las cuentas y sus hashes, pero no las sesiones, así que hay que entrar de nuevo. En una base realmente vacía, `/setup` crea la primera cuenta de oficina. Tras entrar se abre el resumen; no figura en el menú, pero el logotipo lleva de vuelta a él. Al asignar un técnico, fecha y franja son obligatorias y quedan guardadas en cada visita. Para revisar cambios: `npm run build`, `npm run lint`, `npx tsc --noEmit` y `npm test`.
 
 Las migraciones reproducibles están en `supabase/migrations/`. El proyecto elegido ya recibió el esquema y los registros locales; no vuelvas a aplicarlos. `supabase/seed.sql` añade datos ficticios marcados `DEMO` sin borrar los existentes. El respaldo original de D1/R2 está en `backups/pre-supabase-20260920-110324/`, ignorado por Git. Para subir y verificar sus tres archivos, con `.env.local` configurado, ejecuta `node --env-file=.env.local scripts/upload-supabase-files.mjs backups/pre-supabase-20260920-110324`. Consulta [la decisión de migración](Docs/Decisions/004-supabase-username-migration.md).
+
+## Calculadora
+
+Abre «Calculadora» desde el lateral; en móvil de oficina está en «Más» y en móvil técnico tiene acceso directo. Selecciona suma, resta, multiplicación, división, potencia o raíz cuadrada; introduce los números y pulsa «Calcular». Puedes escribir decimales con coma o punto, sin separadores de miles. «Limpiar» reinicia el formulario. Los resultados se calculan en el navegador y no se guardan.
 
 ## Organización y documentación
 
@@ -33,4 +37,4 @@ Actualiza el documento correspondiente cada vez que cambies código, configuraci
 
 ## Control de versiones
 
-El proyecto usa Git local en la rama `main`; todavía no tiene remoto. Para preparar otra copia, ejecuta `Copy-Item .env.example .env.local` en PowerShell y sustituye los marcadores por tus credenciales, sin subir el archivo. Antes de cada commit, revisa `git status` y `git diff --cached --name-only`; confirma únicamente código, migraciones, pruebas y documentación. Consulta la [decisión 005](Docs/Decisions/005-git-local.md).
+El proyecto usa la rama `main` y sigue `origin/main` en [CODEX-APPPARTES](https://github.com/moisesdanieldiazpalomino/CODEX-APPPARTES). `git push` publica únicamente commits: los cambios sin confirmar permanecen en este PC. Para preparar otra copia, ejecuta `Copy-Item .env.example .env.local` en PowerShell y sustituye los marcadores por tus credenciales, sin subir el archivo. Antes de cada commit, revisa `git status` y `git diff --cached --name-only`; confirma únicamente código, migraciones, pruebas y documentación. Consulta las [decisiones 005](Docs/Decisions/005-git-local.md) y [006](Docs/Decisions/006-github-remote.md).

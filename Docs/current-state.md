@@ -9,11 +9,12 @@ Actualizado: 20 de septiembre de 2026.
 - Asignación y programación por fecha y franja; estados registrado, asignado, en curso, pendiente de pieza, pendiente de volver y terminado.
 - Visitas con informes por máquina, fotos, piezas como texto libre, firma, PDF y propuestas de máquina provisional.
 - Pantallas de oficina y técnico, búsqueda básica e historial de máquinas.
+- Calculadora accesible para ambos perfiles: suma, resta, multiplicación, división, potencia y raíz cuadrada. Acepta coma o punto decimal, muestra errores para operaciones no válidas y no guarda resultados.
 - Ejecución local preparada para Next.js con PostgreSQL y Supabase Storage. El estado previo de D1/R2 se conserva como respaldo; la conexión nueva aún requiere credenciales locales.
 
 ## Pendiente o no verificado
 
-- Hay veintidós pruebas automatizadas de utilidades de migración, contraseñas, programación de visitas y estados de envío de formularios, pero todavía no cubren los flujos completos de negocio ni existe una prueba integral con PC, móvil y tableta. Las búsquedas avanzadas y algunos flujos de corrección requieren revisión funcional.
+- Hay cuarenta y siete pruebas automatizadas de utilidades de migración, contraseñas, programación de visitas, estados de envío, navegación y calculadora, pero todavía no cubren los flujos completos de negocio ni existe una prueba integral con PC, móvil y tableta. Las búsquedas avanzadas y algunos flujos de corrección requieren revisión funcional.
 - Los scripts `start:local` y `backup` están declarados, pero faltan sus archivos; no hay copia/restauración probada.
 - No se ha validado el acceso desde otros dispositivos por Wi‑Fi ni el despliegue en internet. No hay modo sin conexión ni envío real de PDF por correo.
 - El código operativo sigue en `app/`, `components/`, `lib/` y `db/`; `src/` es una reserva para una migración posterior.
@@ -30,6 +31,14 @@ Se renovaron la paleta, la tipografía, el acceso, la configuración inicial, la
 
 Al enviar el formulario, el botón muestra «Contectando..» con indicador de actividad, queda desactivado para evitar envíos dobles y anuncia la comprobación a tecnologías de asistencia. El indicador respeta la preferencia de movimiento reducido. Si las credenciales son incorrectas, la alerta existente «Usuario o contraseña incorrectos.» aparece en el formulario; con credenciales válidas, la acción crea la sesión y redirige al resumen. El alta de usuarios ahora muestra «Creando usuario...» y un mensaje visible mientras procesa, también bloqueando envíos repetidos. No se modifican las reglas de autenticación. Pasan las siete pruebas nuevas y las veintidós del proyecto, TypeScript, compilación y comprobación de guías; ESLint solo informa una advertencia previa en `lib/pdf.ts`. La ruta local `/login` respondió 200 y mostró la alerta al recibir el parámetro de error. Queda pendiente comprobar visualmente ambos estados durante una operación lenta.
 
+## Navegación sin Resumen
+
+Se retiró «Resumen» del menú lateral de oficina y de la barra móvil; ningún perfil lo muestra como opción. La oficina conserva Trabajos, Clientes y máquinas, Propuestas y Usuarios; en móvil, las dos últimas áreas quedan en «Más». «Mis trabajos» del técnico no cambia. La ruta `/dashboard` permanece como destino tras iniciar sesión y desde el logotipo. Cuatro pruebas nuevas cubren ambos perfiles, el menú móvil y la indicación de sección activa.
+
+## Calculadora
+
+En `nueva-funcionalidad` se añadió `/calculadora` para oficina y técnicos. Tiene suma, resta, multiplicación, división, potencia y raíz cuadrada, con campos decimales, resultado accesible, botón para limpiar y errores de entradas o cálculos sin resultado real. La oficina la encuentra en el lateral o en «Más» en móvil; el técnico, en el lateral o en su nueva barra móvil. El cálculo es local y no persiste datos. Se comprobaron en el navegador una suma decimal, división por cero y raíz cuadrada; no hubo desbordamiento horizontal a 390 ni 709 px. Pasan las 47 pruebas, TypeScript y compilación; ESLint solo mantiene la advertencia previa en `lib/pdf.ts`. La interfaz técnica móvil se verificó mediante pruebas de renderizado, no con una sesión técnica real.
+
 ## Seguimiento de tareas
 
 El cuaderno [App de Partes](https://app.notion.com/p/3490b826c6f44d54ae47543a35451b75) en Notion contiene una tabla con nombre, descripción, fecha prevista, fecha de implementación, urgencia y estado. Se registraron como pendientes la configuración de la base de datos para el entorno objetivo, el despliegue en VPS y la revisión de seguridad. Fechas y urgencias permanecen sin asignar hasta acordarlas.
@@ -44,4 +53,8 @@ La propuesta anterior quedó sustituida por la [decisión 004](Decisions/004-sup
 
 ## Control de versiones
 
-Se preparó Git local con rama `main` y un primer commit del estado actual. `.gitignore` excluye credenciales, respaldos, datos locales, dependencias, cachés y compilaciones; `.env.example` contiene solo marcadores. `AGENTS.md` y `Claude.md` siguen sincronizados y en español. Para impedir que Next.js vuelva a añadir un bloque en inglés, `next.config.ts` desactiva su generación automática de reglas de agente; la guía propia mantiene el enlace a la documentación local de Next.js. No se configuró un remoto ni se publicaron archivos. Véase [decisión 005](Decisions/005-git-local.md).
+Por petición expresa del usuario, `git commit` y `git pull` requieren una solicitud explícita para cada operación. Las tareas de edición, pruebas o documentación no autorizan ejecutarlas.
+
+La rama de trabajo `nueva-funcionalidad` se creó desde `main` en `194de7b`, quedó seleccionada y se publicó como `origin/nueva-funcionalidad` sin merge. El desarrollo posterior de Calculadora, junto con la retirada previa de «Resumen» y la documentación pendiente de GitHub, se confirmó y publicó en esa rama por solicitud expresa. `main` sigue en `194de7b`; no se hizo merge ni pull.
+
+Se preparó Git local con rama `main` y un primer commit del estado actual. `.gitignore` excluye credenciales, respaldos, datos locales, dependencias, cachés y compilaciones; `.env.example` contiene solo marcadores. `AGENTS.md` y `Claude.md` siguen sincronizados y en español. Para impedir que Next.js vuelva a añadir un bloque en inglés, `next.config.ts` desactiva su generación automática de reglas de agente; la guía propia mantiene el enlace a la documentación local de Next.js. `main` sigue `origin/main` en [CODEX-APPPARTES](https://github.com/moisesdanieldiazpalomino/CODEX-APPPARTES), con los commits existentes hasta `194de7b`. Véanse las [decisiones 005](Decisions/005-git-local.md) y [006](Decisions/006-github-remote.md).

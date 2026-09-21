@@ -19,7 +19,9 @@ Ejecuta Vitest con `npm test` o `npm run test:watch`. `test/` cubre migración d
 
 ## Commits y solicitudes de cambio
 
-El repositorio local usa la rama `main`; todavía no tiene remoto. Usa títulos breves en imperativo, por ejemplo: `Validar estados de visitas`. Antes de confirmar, revisa `git status` y `git diff --cached --name-only`. En cada solicitud de cambio, explica flujo, migraciones y verificaciones; adjunta capturas si cambia la interfaz. Nunca incorpores `.env.local`, `.wrangler/`, credenciales, fotos de clientes, firmas ni PDF generados.
+No ejecutes `git commit` ni `git pull` salvo que el usuario solicite explícitamente esa operación. Editar, probar o documentar no concede esa autorización.
+
+El repositorio local usa `main` y sigue `origin/main` en GitHub. Usa títulos breves en imperativo, por ejemplo: `Validar estados de visitas`. Antes de confirmar, revisa `git status` y `git diff --cached --name-only`. En cada solicitud de cambio, explica flujo, migraciones y verificaciones; adjunta capturas si cambia la interfaz. Nunca incorpores `.env.local`, `.wrangler/`, credenciales, fotos de clientes, firmas ni PDF generados.
 
 ## Documentación obligatoria
 
